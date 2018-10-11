@@ -174,15 +174,15 @@ EOT
                 # @param dir String Directory to save certs to
                 def generate_intermediate_ca(host)
                     pki = create_chained_pki
-                    tmpdir = Dir.mktmpdir('intermediate_ca')
+                    tmpdir = Dir.mktmpdir()
+                    dir = Dir.mkdir("#{tmpdir}/intermediate_ca")
                     pki.each do |name,cert|
-                        File.open("#{tmpdir}/#{name}",'w') do |f|
+                        File.open("#{dir}/#{name}",'w') do |f|
                             f.write(cert.to_s)
                         end
                     end
                     on(host, "rm -rf /tmp/intermediate_ca")
-                    on(host, "mkdir -p /tmp/intermediate_ca")
-                    scp_to(host, "#{tmpdir}/*", "/tmp/intermediate_ca")
+                    scp_to(host, dir, "/tmp")
                 end
             end
         end
