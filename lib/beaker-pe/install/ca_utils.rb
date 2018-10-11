@@ -182,7 +182,7 @@ EOT
                     end
                     on(host, "rm -rf /tmp/intermediate_ca")
                     on(host, "mkdir -p /tmp/intermediate_ca")
-                    scp_to(host, "#{tmpdir}/*", "/tmp/intermediate_ca/*")
+                    scp_to(host, "#{tmpdir}/*", "/tmp/intermediate_ca")
                 end
             end
         end
