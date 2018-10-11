@@ -170,16 +170,19 @@ EOT
                     items.map {|i| EXPLANATORY_TEXT + i.to_pem }.join("\n")
                 end
 
-                # Generate root and intermediate certs.  Make this comment better.
+                # Generate root and intermediate certs, then scp out to host at /tmp/intermediate_ca for use in install
                 # @param dir String Directory to save certs to
-                def generate_intermediate_ca(dir)
+                def generate_intermediate_ca(host)
                     pki = create_chained_pki
-                    FileUtils.mkdir(dir) unless File.directory? dir
+                    tmpdir = Dir.mktmpdir('intermediate_ca')
                     pki.each do |name,cert|
-                        File.open("#{dir}/#{name}",'w') do |f|
+                        File.open("#{tmpdir}/#{name}",'w') do |f|
                             f.write(cert.to_s)
                         end
                     end
+                    on(host, "rm -rf /tmp/intermediate_ca")
+                    on(host, "mkdir -p /tmp/intermediate_ca")
+                    scp_to(host, tmpdir, "/tmp/intermediate_ca")
                 end
             end
         end
